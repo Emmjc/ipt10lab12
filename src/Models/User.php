@@ -21,7 +21,7 @@ class User extends BaseModel
             'password_hash' => $password_hash
         ]);
     
-        return $statement->rowCount();
+        return $this->db->lastInsertId();
     }
 
     protected function hashPassword($password)

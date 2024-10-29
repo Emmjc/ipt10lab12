@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\Question;
 use App\Models\UserAnswer;
+use App\Models\User;
 
 class ExamController extends BaseController
 {
@@ -19,16 +20,15 @@ class ExamController extends BaseController
         $this->initializeSession();
         $data = $_POST;
 
-        $userModel = new \App\Models\User();
-        $userId = $userModel->save($data);
+        $userObj = new User();
+        $user_id = $userObj->save($data);
 
-        If ($userId) {
-        $_SESSION['user_id'] = $userId; // Replace this literal value with the actual user ID from new registration
+        $_SESSION['user_id'] = $user_id; // Replace this literal value with the actual user ID from new registration
         $_SESSION['complete_name'] = $data['complete_name'];
         $_SESSION['email'] = $data['email'];
-        }
+        
 
-        return $this->render('pre-exam', $data);
+        return $this->render('login-form', $data);
     }
 
     public function exam()
@@ -64,14 +64,15 @@ class ExamController extends BaseController
             error_log('ANSWERS = ' . $json_answers);
 
             $userAnswerObj = new UserAnswer();
-            $userAnswerObj->save(
-                $user_id,
-                $json_answers
-            );
             $score = $questionObj->computeScore($_SESSION['answers']);
             $items = $questionObj->getTotalQuestions();
-            $userAnswerObj->saveAttempt($user_id, $items, $score);
-
+            $attempt_id = $userAnswerObj->saveAttempt($user_id, $items, $score);
+            $userAnswerObj->save(
+                $user_id,
+                $json_answers,
+                $attempt_id
+            );
+            
             header("Location: /result");
             exit;
         }
