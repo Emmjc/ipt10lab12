@@ -18,10 +18,15 @@ class ExamController extends BaseController
     {
         $this->initializeSession();
         $data = $_POST;
-        // Save the registration to database
-        $_SESSION['user_id'] = 1; // Replace this literal value with the actual user ID from new registration
+
+        $userModel = new \App\Models\User();
+        $userId = $userModel->save($data);
+
+        If ($userId) {
+        $_SESSION['user_id'] = $userId; // Replace this literal value with the actual user ID from new registration
         $_SESSION['complete_name'] = $data['complete_name'];
         $_SESSION['email'] = $data['email'];
+        }
 
         return $this->render('pre-exam', $data);
     }

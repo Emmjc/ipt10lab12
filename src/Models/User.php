@@ -12,7 +12,7 @@ class User extends BaseModel
                 SET
                     complete_name=:complete_name,
                     email=:email,
-                    `password`=:password_hash";        
+                    password_hash=:password_hash";        
         $statement = $this->db->prepare($sql);
         $password_hash = $this->hashPassword($data['password']);
         $statement->execute([
